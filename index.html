@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#ffd900" />
     <meta
       name="description"
-      content="一个无追踪、无第三方请求的 Giffgaff SIM 保号辅助页面。"
+      content="一个无追踪、无第三方请求的 giffgaff SIM 保号辅助页面。"
     />
-    <title>Giffgaff 保号助手</title>
+    <title>giffgaff 保号助手</title>
     <style>
       :root {
         color-scheme: light;
@@ -477,7 +477,7 @@
           <p class="eyebrow">SIM activity helper</p>
           <h1>用一次可控的数据请求，保持号码活跃</h1>
           <p class="lead">
-            Giffgaff 官方说明：SIM 连续 6 个月没有有效使用可能被停用；一次移动数据连接属于有效活动。本页只能确认载荷已下载，无法读取运营商账户状态。
+            giffgaff 官方说明：SIM 连续 6 个月没有有效使用可能被停用；一次移动数据连接属于有效活动。本页只能确认载荷已下载，无法读取运营商账户状态。
           </p>
 
           <div class="metrics" aria-label="本次请求信息">
@@ -492,14 +492,16 @@
           </div>
 
           <div class="notice">
-            建议预留余量，每 5 个月主动完成一次并核对账户。先用 Wi-Fi 打开并收藏本页，再保持页面打开、关闭 Wi-Fi 后执行，可减少不可控的页面加载流量。
+            建议预留余量，每 5 个月主动完成一次并核对账户。先用 Wi-Fi 打开并收藏本页，再保持页面打开、关闭 Wi-Fi 后执行。开启移动数据前，请关闭其他 App 的移动数据权限，并暂停系统更新、云同步和消息、邮件的后台刷新；完成后立即关闭移动数据，避免额外流量。
           </div>
 
           <label class="confirm" for="networkConfirm">
             <input id="networkConfirm" type="checkbox" />
             <span class="confirm-text">
-              我已关闭 Wi-Fi，并确认当前使用 Giffgaff 移动数据
-              <span class="confirm-help">浏览器无法自动判断 SIM 或运营商，请手动确认。</span>
+              我已关闭 Wi-Fi、暂停其他 App 的移动数据，并确认当前使用 giffgaff 移动数据
+              <span class="confirm-help"
+                >系统更新、云同步和消息、邮件可能在后台消耗流量；浏览器无法自动阻止。</span
+              >
             </span>
           </label>
 
@@ -507,7 +509,7 @@
             下载 120 KiB 载荷
           </button>
           <p class="cost-note">
-            首次加载本页及网络协议会产生额外流量；套餐与漫游资费因所在地而异，请以 Giffgaff 账户为准。
+            首次加载本页及网络协议会产生额外流量；套餐与漫游资费因所在地而异，请以 giffgaff 账户为准。
           </p>
 
           <div
@@ -526,7 +528,7 @@
         <div class="lower">
           <section class="section" aria-labelledby="historyTitle">
             <h2 id="historyTitle">本机下载记录</h2>
-            <p class="history-meta">仅保存在当前浏览器，不代表 Giffgaff 已确认活动。</p>
+            <p class="history-meta">仅保存在当前浏览器，不代表 giffgaff 已确认活动。</p>
             <ul class="history-list" id="historyList"></ul>
             <p class="next-date" id="nextDate" hidden></p>
           </section>
@@ -538,9 +540,9 @@
               <ol class="checklist">
                 <li>先在 Wi-Fi 下打开并收藏页面。</li>
                 <li>保持页面打开，关闭 Wi-Fi，确认数据漫游设置正确。</li>
-                <li>暂停系统更新、云同步及其他应用的移动数据。</li>
+                <li>关闭其他 App 的移动数据权限，并暂停系统更新、云同步和消息、邮件的后台刷新。</li>
                 <li>勾选确认后下载；不要连续重复点击。</li>
-                <li>完成后关闭移动数据，并到 Giffgaff 账户核对活动或余额。</li>
+                <li>完成后关闭移动数据，并到 giffgaff 账户核对活动或余额。</li>
               </ol>
             </details>
           </section>
@@ -748,7 +750,7 @@
             setStatus(
               "success",
               "数据请求完成",
-              `已接收 120.00 KiB，用时 ${elapsedSeconds} 秒。请到 Giffgaff 账户或余额记录中确认运营商侧活动。`,
+              `已接收 120.00 KiB，用时 ${elapsedSeconds} 秒。请到 giffgaff 账户或余额记录中确认运营商侧活动。`,
               false,
             );
           } catch (error) {

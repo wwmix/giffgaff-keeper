@@ -1,14 +1,14 @@
-# Giffgaff 保号助手
+# giffgaff 保号助手
 
-一个完全静态、无第三方依赖的 Giffgaff SIM 保号辅助页面。它通过同源下载一个固定的 120 KiB 二进制载荷，帮助用户主动产生一次移动数据连接。
+一个完全静态、无第三方依赖的 giffgaff SIM 保号辅助页面。它通过同源下载一个固定的 120 KiB 二进制载荷，帮助用户主动产生一次移动数据连接。
 
-**在线使用：[打开 Giffgaff 保号助手](https://wwmix.github.io/giffgaff-keeper/)**
+**在线使用：[打开 giffgaff 保号助手](https://wwmix.github.io/giffgaff-keeper/)**
 
-> 这不是 Giffgaff 官方工具。网页只能确认文件下载与大小校验完成，不能确认运营商已经登记活动；使用后仍应检查 Giffgaff 账户或余额记录。
+> 这不是 giffgaff 官方工具。网页只能确认文件下载与大小校验完成，不能确认运营商已经登记活动；使用后仍应检查 giffgaff 账户或余额记录。
 
 ## 致谢与来源
 
-本项目的核心思路与初始方案借鉴自 [dennischancs/gg-keeper](https://github.com/dennischancs/gg-keeper)。感谢原作者 [@dennischancs](https://github.com/dennischancs) 公开分享 Giffgaff 流量保号方案，为本项目提供了清晰的实现思路。
+本项目的核心思路与初始方案借鉴自 [dennischancs/gg-keeper](https://github.com/dennischancs/gg-keeper)。感谢原作者 [@dennischancs](https://github.com/dennischancs) 公开分享 giffgaff 流量保号方案，为本项目提供了清晰的实现思路。
 
 本仓库在原方案基础上重新实现页面，并针对载荷可压缩性、结果表述、误触保护、本地记录安全、漫游费用提示与无障碍体验进行了调整。原项目的贡献与启发应当被明确保留和尊重。
 
@@ -18,6 +18,7 @@
 - 使用随机查询参数和 `cache: no-store`，每次由用户主动触发新的请求。
 - 不再把“下载成功”表述成“保号成功”，避免把浏览器结果冒充运营商确认。
 - 下载前必须手动确认网络，完成或失败后都需要重新勾选，降低误触与重复计费风险。
+- 参考原方案对后台流量的提醒，将关闭其他 App 的移动数据、暂停系统更新和云同步前置到醒目提示与下载确认。
 - 只在载荷大小校验通过后写入历史；本地存储异常不会影响页面主体功能。
 - 历史使用 DOM 文本节点渲染，不把本地数据拼接进 `innerHTML`。
 - 加入 45 秒超时但不自动重试，避免网络不稳时悄悄产生第二次流量。
@@ -26,12 +27,12 @@
 ## 使用
 
 1. 先在 Wi-Fi 下打开页面并加入书签。
-2. 保持页面打开，关闭 Wi-Fi，确认移动数据或数据漫游走 Giffgaff SIM。
-3. 暂停系统更新、云同步和其他应用的移动数据。
+2. 保持页面打开，关闭 Wi-Fi，确认移动数据或数据漫游走 giffgaff SIM。
+3. 关闭其他 App 的移动数据权限，并暂停系统更新、云同步和消息、邮件的后台刷新。
 4. 勾选网络确认，点击“下载 120 KiB 载荷”。
-5. 页面显示“数据请求完成”后关闭移动数据，并检查 Giffgaff 账户活动或余额。
+5. 页面显示“数据请求完成”后关闭移动数据，并检查 giffgaff 账户活动或余额。
 
-Giffgaff 当前说明是：SIM 在 6 个月内至少要有一次符合条件的活动；连接一次移动数据属于其中一种。为了兼顾余量与灵活性，本页会提示“上次记录 5 个月后至 6 个月届满前”的具体日期区间。规则与资费可能调整，请以 [Giffgaff 停用规则](https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated) 和 [漫游资费](https://www.giffgaff.com/roaming-charges) 为准。
+giffgaff 当前说明是：SIM 在 6 个月内至少要有一次符合条件的活动；连接一次移动数据属于其中一种。为了兼顾余量与灵活性，本页会提示“上次记录 5 个月后至 6 个月届满前”的具体日期区间。规则与资费可能调整，请以 [giffgaff 停用规则](https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated) 和 [漫游资费](https://www.giffgaff.com/roaming-charges) 为准。
 
 ## 部署到 GitHub Pages
 
