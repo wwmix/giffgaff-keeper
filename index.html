@@ -278,6 +278,54 @@
         text-align: center;
       }
 
+      .reminder-action {
+        margin-top: 16px;
+        padding: 17px;
+        border: 1px solid #d4d4c8;
+        border-radius: 15px;
+        background: #fbfbf5;
+      }
+
+      .secondary-button {
+        width: 100%;
+        min-height: 50px;
+        padding: 12px 16px;
+        border: 2px solid var(--ink);
+        border-radius: 13px;
+        color: var(--ink);
+        background: var(--surface);
+        font-weight: 820;
+        cursor: pointer;
+        transition:
+          transform 150ms ease,
+          box-shadow 150ms ease,
+          background 150ms ease;
+      }
+
+      .secondary-button:hover {
+        background: #fff8c9;
+        box-shadow: 3px 3px 0 var(--ink);
+        transform: translate(-1px, -1px);
+      }
+
+      .secondary-button:active {
+        box-shadow: none;
+        transform: translate(1px, 1px);
+      }
+
+      .reminder-hint,
+      .reminder-feedback {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .reminder-feedback {
+        color: var(--ok);
+        font-weight: 700;
+      }
+
       .status {
         margin-top: 18px;
         padding: 17px;
@@ -521,6 +569,25 @@
             <div class="status-heading" id="statusHeading"></div>
             <p class="status-detail" id="statusDetail"></p>
           </div>
+
+          <div class="reminder-action" id="reminderAction" data-testid="reminder-action" hidden>
+            <button
+              class="secondary-button"
+              id="reminderButton"
+              data-testid="reminder-button"
+              type="button"
+            >
+              添加事项提醒
+            </button>
+            <p class="reminder-hint" id="reminderHint"></p>
+            <p
+              class="reminder-feedback"
+              id="reminderFeedback"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></p>
+          </div>
         </section>
 
         <div class="lower">
@@ -576,6 +643,8 @@
         const STORAGE_KEY = "giffgaffKeeperHistoryV2";
         const MAX_HISTORY = 5;
         const REQUEST_TIMEOUT_MS = 45_000;
+        const REMINDER_DELAY_DAYS = 157;
+        const REMINDER_PAGE_URL = "https://wwmix.github.io/giffgaff-keeper/";
 
         const confirmCheckbox = document.getElementById("networkConfirm");
         const downloadButton = document.getElementById("downloadButton");
@@ -584,7 +653,12 @@
         const statusDetail = document.getElementById("statusDetail");
         const historyList = document.getElementById("historyList");
         const nextDate = document.getElementById("nextDate");
+        const reminderAction = document.getElementById("reminderAction");
+        const reminderButton = document.getElementById("reminderButton");
+        const reminderHint = document.getElementById("reminderHint");
+        const reminderFeedback = document.getElementById("reminderFeedback");
         let busy = false;
+        let lastSuccessfulAt = null;
 
         function readHistory() {
           try {
@@ -683,6 +757,126 @@
           return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
         }
 
+        function getReminderDetails(completedAt) {
+          const dueDate = new Date(completedAt);
+          dueDate.setHours(9, 0, 0, 0);
+          dueDate.setDate(dueDate.getDate() + REMINDER_DELAY_DAYS);
+
+          const dateText = new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "short",
+          }).format(dueDate);
+
+          return {
+            dueDate,
+            dateText,
+            title: `${dateText}：Giffgaff 保号提醒`,
+            text: `请在 ${dateText} 检查 Giffgaff SIM 状态并完成下一次保号（距本次数据请求 ${REMINDER_DELAY_DAYS} 天）。`,
+          };
+        }
+
+        function showReminderAction(completedAt) {
+          lastSuccessfulAt = completedAt;
+          const { dateText } = getReminderDetails(completedAt);
+          reminderHint.textContent = `提醒日期：${dateText}（157 天后）。iPhone 点击后请在系统分享面板选择“提醒事项”，并确认日期。`;
+          reminderFeedback.hidden = true;
+          reminderFeedback.textContent = "";
+          reminderAction.hidden = false;
+        }
+
+        function hideReminderAction() {
+          lastSuccessfulAt = null;
+          reminderAction.hidden = true;
+          reminderFeedback.hidden = true;
+          reminderFeedback.textContent = "";
+        }
+
+        function toIcsTimestamp(date) {
+          return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+        }
+
+        function escapeIcsText(value) {
+          return value
+            .replace(/\\/g, "\\\\")
+            .replace(/\n/g, "\\n")
+            .replace(/,/g, "\\,")
+            .replace(/;/g, "\\;");
+        }
+
+        function downloadCalendarFallback(details, completedAt) {
+          const endDate = new Date(details.dueDate.getTime() + 30 * 60 * 1000);
+          const dateKey = [
+            details.dueDate.getFullYear(),
+            String(details.dueDate.getMonth() + 1).padStart(2, "0"),
+            String(details.dueDate.getDate()).padStart(2, "0"),
+          ].join("-");
+          const calendar = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//wwmix//Giffgaff Keeper//ZH-CN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH",
+            "BEGIN:VEVENT",
+            `UID:giffgaff-keeper-${completedAt}@wwmix.github.io`,
+            `DTSTAMP:${toIcsTimestamp(new Date())}`,
+            `DTSTART:${toIcsTimestamp(details.dueDate)}`,
+            `DTEND:${toIcsTimestamp(endDate)}`,
+            `SUMMARY:${escapeIcsText("Giffgaff 保号提醒")}`,
+            `DESCRIPTION:${escapeIcsText(details.text)}`,
+            `URL:${REMINDER_PAGE_URL}`,
+            "BEGIN:VALARM",
+            "TRIGGER:PT0M",
+            "ACTION:DISPLAY",
+            `DESCRIPTION:${escapeIcsText("Giffgaff 保号提醒")}`,
+            "END:VALARM",
+            "END:VEVENT",
+            "END:VCALENDAR",
+          ].join("\r\n");
+          const fileUrl = URL.createObjectURL(
+            new Blob([calendar], { type: "text/calendar;charset=utf-8" }),
+          );
+          const link = document.createElement("a");
+          link.href = fileUrl;
+          link.download = `giffgaff-reminder-${dateKey}.ics`;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(fileUrl), 1_000);
+
+          reminderFeedback.textContent = `当前浏览器无法调用系统分享，已生成 ${dateKey} 的日历提醒文件。`;
+          reminderFeedback.hidden = false;
+        }
+
+        async function addReminder() {
+          if (!lastSuccessfulAt) return;
+
+          const details = getReminderDetails(lastSuccessfulAt);
+          if (typeof navigator.share !== "function") {
+            downloadCalendarFallback(details, lastSuccessfulAt);
+            return;
+          }
+
+          try {
+            await navigator.share({
+              title: details.title,
+              text: details.text,
+              url: REMINDER_PAGE_URL,
+            });
+            reminderFeedback.textContent = `提醒内容已交给系统，请确认已保存且日期为 ${details.dateText}。`;
+            reminderFeedback.hidden = false;
+          } catch (error) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+              reminderFeedback.textContent = "已取消系统分享，没有新增提醒。";
+              reminderFeedback.hidden = false;
+              return;
+            }
+
+            downloadCalendarFallback(details, lastSuccessfulAt);
+          }
+        }
+
         async function downloadPayload() {
           if (busy || !confirmCheckbox.checked) return;
 
@@ -693,6 +887,7 @@
 
           busy = true;
           syncButton();
+          hideReminderAction();
           setStatus("loading", "正在下载固定载荷", "请保持页面打开；本页不会自动重试。", true);
 
           const controller = new AbortController();
@@ -721,8 +916,9 @@
             }
 
             const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(2);
+            const completedAt = Date.now();
             const history = readHistory();
-            history.push({ timestamp: Date.now(), bytes: payload.byteLength });
+            history.push({ timestamp: completedAt, bytes: payload.byteLength });
             writeHistory(history);
             renderHistory();
 
@@ -732,6 +928,7 @@
               `已接收 120.00 KiB，用时 ${elapsedSeconds} 秒。请到 Giffgaff 账户或余额记录中确认运营商侧活动。`,
               false,
             );
+            showReminderAction(completedAt);
           } catch (error) {
             const message =
               error instanceof DOMException && error.name === "AbortError"
@@ -748,6 +945,7 @@
 
         confirmCheckbox.addEventListener("change", syncButton);
         downloadButton.addEventListener("click", downloadPayload);
+        reminderButton.addEventListener("click", addReminder);
         renderHistory();
         syncButton();
       })();
