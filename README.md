@@ -29,19 +29,9 @@
 2. 保持页面打开，关闭 Wi-Fi，确认移动数据或数据漫游走 Giffgaff SIM。
 3. 暂停系统更新、云同步和其他应用的移动数据。
 4. 勾选网络确认，点击“下载 120 KiB 载荷”。
-5. 页面显示“数据请求完成”后，可点击“添加事项提醒”，为 157 天后准备下一次保号提醒。
-6. 关闭移动数据，并检查 Giffgaff 账户活动或余额。
+5. 页面显示“数据请求完成”后关闭移动数据，并检查 Giffgaff 账户活动或余额。
 
 Giffgaff 当前说明是：SIM 在 6 个月内至少要有一次符合条件的活动；连接一次移动数据属于其中一种。为了留余量，本页按 5 个月提示下一次日期。规则与资费可能调整，请以 [Giffgaff 停用规则](https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated) 和 [漫游资费](https://www.giffgaff.com/roaming-charges) 为准。
-
-## 157 天提醒
-
-载荷下载并校验通过后，页面会显示“添加事项提醒”按钮，并自动计算 157 天后的准确日期。
-
-- iPhone/iPad：点击后打开系统分享面板，请选择“提醒事项”，再确认标题中的日期和保存操作。网页没有直接写入“提醒事项”数据库的权限，因此不能绕过系统确认。
-- 其他或不支持系统分享的浏览器：自动生成包含准确日期、09:00 提醒和保号页面链接的 `.ics` 日历文件。
-
-相关能力说明：[Apple：从其他 App 添加提醒事项](https://support.apple.com/en-us/102484)、[Web Share API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API)。
 
 ## 部署到 GitHub Pages
 
