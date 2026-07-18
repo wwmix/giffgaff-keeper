@@ -31,7 +31,7 @@
 4. 勾选网络确认，点击“下载 120 KiB 载荷”。
 5. 页面显示“数据请求完成”后关闭移动数据，并检查 Giffgaff 账户活动或余额。
 
-Giffgaff 当前说明是：SIM 在 6 个月内至少要有一次符合条件的活动；连接一次移动数据属于其中一种。为了留余量，本页按 5 个月提示下一次日期。规则与资费可能调整，请以 [Giffgaff 停用规则](https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated) 和 [漫游资费](https://www.giffgaff.com/roaming-charges) 为准。
+Giffgaff 当前说明是：SIM 在 6 个月内至少要有一次符合条件的活动；连接一次移动数据属于其中一种。为了兼顾余量与灵活性，本页会提示“上次记录 5 个月后至 6 个月届满前”的具体日期区间。规则与资费可能调整，请以 [Giffgaff 停用规则](https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated) 和 [漫游资费](https://www.giffgaff.com/roaming-charges) 为准。
 
 ## 部署到 GitHub Pages
 

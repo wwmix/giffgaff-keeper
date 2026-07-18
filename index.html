@@ -621,6 +621,20 @@
           }).format(new Date(timestamp));
         }
 
+        function addCalendarMonthsClamped(date, months) {
+          const result = new Date(date);
+          const originalDay = result.getDate();
+          result.setDate(1);
+          result.setMonth(result.getMonth() + months);
+          const lastDayOfTargetMonth = new Date(
+            result.getFullYear(),
+            result.getMonth() + 1,
+            0,
+          ).getDate();
+          result.setDate(Math.min(originalDay, lastDayOfTargetMonth));
+          return result;
+        }
+
         function renderHistory() {
           const history = readHistory();
           historyList.replaceChildren();
@@ -649,12 +663,17 @@
           });
 
           const latest = new Date(history.at(-1).timestamp);
-          const suggested = new Date(latest);
-          suggested.setMonth(suggested.getMonth() + 5);
-          nextDate.textContent = `按 5 个月余量计算，建议下次不晚于 ${new Intl.DateTimeFormat(
-            "zh-CN",
-            { year: "numeric", month: "long", day: "numeric" },
-          ).format(suggested)}。`;
+          const suggestedStart = addCalendarMonthsClamped(latest, 5);
+          const suggestedEnd = addCalendarMonthsClamped(latest, 6);
+          suggestedEnd.setDate(suggestedEnd.getDate() - 1);
+          const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+      nextDate.textContent =
+        "按官方规则，建议在 5 个月后至 6 个月届满前完成下一次保号。" +
+        `具体日期：请在 ${dateFormatter.format(suggestedStart)}—${dateFormatter.format(suggestedEnd)}之间完成。`;
           nextDate.hidden = false;
         }
 

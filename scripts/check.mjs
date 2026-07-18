@@ -17,6 +17,8 @@ assert.match(html, /new URL\("\.\/payload\.bin"/, "page must request the local p
 assert.match(html, /cache: "no-store"/, "page must bypass the browser HTTP cache");
 assert.doesNotMatch(html, /保号成功/, "page must not claim carrier-side success");
 assert.match(html, /aria-live="polite"/, "status updates must be announced accessibly");
+assert.match(html, /addCalendarMonthsClamped/, "reminder range must clamp calendar month dates");
+assert.match(html, /6 个月届满前/, "page must show a five-to-six-month reminder range");
 
 console.log(
   `Checks passed: ${payload.length} bytes, gzip ratio ${compressionRatio.toFixed(4)}`,
