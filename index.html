@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffd900" />
+    <meta
+      name="description"
+      content="一个无追踪、无第三方请求的 Giffgaff SIM 保号辅助页面。"
+    />
+    <title>Giffgaff 保号助手</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #171712;
+        --muted: #66665d;
+        --paper: #fffef7;
+        --surface: #ffffff;
+        --line: #deded2;
+        --brand: #ffd900;
+        --brand-deep: #e3be00;
+        --ok: #0b6b45;
+        --ok-bg: #e7f7ef;
+        --warn: #815900;
+        --warn-bg: #fff4cc;
+        --error: #a02d2d;
+        --error-bg: #fff0f0;
+        --shadow: 0 24px 70px rgba(38, 34, 0, 0.13);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--paper);
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 15% 5%, rgba(255, 217, 0, 0.25), transparent 32rem),
+          radial-gradient(circle at 90% 45%, rgba(255, 217, 0, 0.12), transparent 25rem),
+          var(--paper);
+        font-family:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-underline-offset: 0.2em;
+      }
+
+      .page {
+        width: min(100% - 32px, 680px);
+        margin: 0 auto;
+        padding: 34px 0 44px;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .brand {
+        font-size: 1.05rem;
+        font-weight: 850;
+        letter-spacing: -0.025em;
+      }
+
+      .brand-mark {
+        display: inline-block;
+        width: 0.72em;
+        height: 0.72em;
+        margin-right: 0.45em;
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+        background: var(--brand);
+        box-shadow: 3px 3px 0 var(--ink);
+        vertical-align: 0.02em;
+      }
+
+      .unofficial {
+        padding: 5px 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.7);
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .card {
+        border: 1px solid rgba(23, 23, 18, 0.12);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .hero {
+        padding: clamp(26px, 7vw, 48px);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 14px;
+        color: #594c00;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--brand-deep);
+        content: "";
+      }
+
+      h1 {
+        max-width: 12em;
+        margin: 0;
+        font-size: clamp(2rem, 7vw, 3.5rem);
+        line-height: 1.08;
+        letter-spacing: -0.055em;
+      }
+
+      .lead {
+        max-width: 38rem;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.75;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 28px 0;
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fbfbf5;
+      }
+
+      .metric-value {
+        display: block;
+        font-size: clamp(1.25rem, 5vw, 1.65rem);
+        font-weight: 850;
+        letter-spacing: -0.04em;
+      }
+
+      .metric-label {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .notice {
+        margin-bottom: 20px;
+        padding: 14px 15px;
+        border: 1px solid #ead16d;
+        border-radius: 14px;
+        color: #554300;
+        background: #fff9df;
+        font-size: 0.84rem;
+        line-height: 1.6;
+      }
+
+      .confirm {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 11px;
+        align-items: start;
+        margin: 0 0 15px;
+        padding: 15px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .confirm:hover {
+        border-color: #aaa996;
+      }
+
+      .confirm input {
+        width: 20px;
+        height: 20px;
+        margin: 1px 0 0;
+        accent-color: var(--ink);
+      }
+
+      .confirm-text {
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.55;
+      }
+
+      .confirm-help {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 500;
+      }
+
+      .primary-button {
+        width: 100%;
+        min-height: 58px;
+        padding: 14px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 15px;
+        color: var(--ink);
+        background: var(--brand);
+        box-shadow: 5px 5px 0 var(--ink);
+        font-weight: 850;
+        cursor: pointer;
+        transition:
+          transform 150ms ease,
+          box-shadow 150ms ease,
+          background 150ms ease;
+      }
+
+      .primary-button:hover:not(:disabled) {
+        background: #ffe42b;
+        transform: translate(-1px, -1px);
+        box-shadow: 7px 7px 0 var(--ink);
+      }
+
+      .primary-button:active:not(:disabled) {
+        transform: translate(4px, 4px);
+        box-shadow: 1px 1px 0 var(--ink);
+      }
+
+      .primary-button:disabled {
+        border-color: #a8a89f;
+        color: #73736c;
+        background: #e6e6df;
+        box-shadow: 3px 3px 0 #a8a89f;
+        cursor: not-allowed;
+      }
+
+      :focus-visible {
+        outline: 3px solid #1769d2;
+        outline-offset: 3px;
+      }
+
+      .cost-note {
+        margin: 13px 0 0;
+        color: var(--muted);
+        font-size: 0.74rem;
+        line-height: 1.55;
+        text-align: center;
+      }
+
+      .status {
+        margin-top: 18px;
+        padding: 17px;
+        border: 1px solid;
+        border-radius: 15px;
+      }
+
+      .status[data-state="loading"] {
+        border-color: #e2c75c;
+        color: var(--warn);
+        background: var(--warn-bg);
+      }
+
+      .status[data-state="success"] {
+        border-color: #8bc9ac;
+        color: var(--ok);
+        background: var(--ok-bg);
+      }
+
+      .status[data-state="error"] {
+        border-color: #e3a5a5;
+        color: var(--error);
+        background: var(--error-bg);
+      }
+
+      .status-heading {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 850;
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 700ms linear infinite;
+      }
+
+      .status-detail {
+        margin: 7px 0 0;
+        font-size: 0.8rem;
+        line-height: 1.55;
+      }
+
+      .lower {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        border-top: 1px solid var(--line);
+        background: #fbfbf4;
+      }
+
+      .section {
+        min-width: 0;
+        padding: 24px clamp(22px, 5vw, 30px) 28px;
+      }
+
+      .section + .section {
+        border-left: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 0.94rem;
+        letter-spacing: -0.01em;
+      }
+
+      .history-meta {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 0.74rem;
+        line-height: 1.55;
+      }
+
+      .history-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 8px;
+        border-top: 1px dashed #d4d4c8;
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .history-item strong {
+        color: var(--ink);
+        font-weight: 750;
+      }
+
+      .empty {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
+      details {
+        font-size: 0.8rem;
+      }
+
+      summary {
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .checklist {
+        margin: 12px 0 0;
+        padding-left: 1.2rem;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .next-date {
+        margin: 12px 0 0;
+        padding: 10px 11px;
+        border-radius: 10px;
+        color: #554300;
+        background: #fff4bc;
+        font-size: 0.75rem;
+        line-height: 1.5;
+      }
+
+      footer {
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        line-height: 1.7;
+        text-align: center;
+      }
+
+      footer a + a::before {
+        margin: 0 8px;
+        content: "·";
+        text-decoration: none;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          width: min(100% - 20px, 680px);
+          padding-top: 18px;
+        }
+
+        .card {
+          border-radius: 22px;
+        }
+
+        .hero {
+          padding: 25px 20px 24px;
+        }
+
+        .lower {
+          grid-template-columns: 1fr;
+        }
+
+        .section + .section {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="brand-row">
+        <div class="brand"><span class="brand-mark" aria-hidden="true"></span>giffgaff keeper</div>
+        <span class="unofficial">非官方工具</span>
+      </div>
+
+      <article class="card">
+        <section class="hero">
+          <p class="eyebrow">SIM activity helper</p>
+          <h1>用一次可控的数据请求，保持号码活跃</h1>
+          <p class="lead">
+            Giffgaff 官方说明：SIM 连续 6 个月没有有效使用可能被停用；一次移动数据连接属于有效活动。本页只能确认载荷已下载，无法读取运营商账户状态。
+          </p>
+
+          <div class="metrics" aria-label="本次请求信息">
+            <div class="metric">
+              <span class="metric-value">120 KiB</span>
+              <span class="metric-label">固定、不可压缩载荷</span>
+            </div>
+            <div class="metric">
+              <span class="metric-value">6 个月内</span>
+              <span class="metric-label">官方要求的有效活动间隔</span>
+            </div>
+          </div>
+
+          <div class="notice">
+            建议预留余量，每 5 个月主动完成一次并核对账户。先用 Wi-Fi 打开并收藏本页，再保持页面打开、关闭 Wi-Fi 后执行，可减少不可控的页面加载流量。
+          </div>
+
+          <label class="confirm" for="networkConfirm">
+            <input id="networkConfirm" type="checkbox" />
+            <span class="confirm-text">
+              我已关闭 Wi-Fi，并确认当前使用 Giffgaff 移动数据
+              <span class="confirm-help">浏览器无法自动判断 SIM 或运营商，请手动确认。</span>
+            </span>
+          </label>
+
+          <button class="primary-button" id="downloadButton" type="button" disabled>
+            下载 120 KiB 载荷
+          </button>
+          <p class="cost-note">
+            首次加载本页及网络协议会产生额外流量；套餐与漫游资费因所在地而异，请以 Giffgaff 账户为准。
+          </p>
+
+          <div
+            class="status"
+            id="status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+          >
+            <div class="status-heading" id="statusHeading"></div>
+            <p class="status-detail" id="statusDetail"></p>
+          </div>
+        </section>
+
+        <div class="lower">
+          <section class="section" aria-labelledby="historyTitle">
+            <h2 id="historyTitle">本机下载记录</h2>
+            <p class="history-meta">仅保存在当前浏览器，不代表 Giffgaff 已确认活动。</p>
+            <ul class="history-list" id="historyList"></ul>
+            <p class="next-date" id="nextDate" hidden></p>
+          </section>
+
+          <section class="section" aria-labelledby="guideTitle">
+            <h2 id="guideTitle">安全操作</h2>
+            <details>
+              <summary>查看完整步骤</summary>
+              <ol class="checklist">
+                <li>先在 Wi-Fi 下打开并收藏页面。</li>
+                <li>保持页面打开，关闭 Wi-Fi，确认数据漫游设置正确。</li>
+                <li>暂停系统更新、云同步及其他应用的移动数据。</li>
+                <li>勾选确认后下载；不要连续重复点击。</li>
+                <li>完成后关闭移动数据，并到 Giffgaff 账户核对活动或余额。</li>
+              </ol>
+            </details>
+          </section>
+        </div>
+      </article>
+
+      <footer>
+        <a
+          href="https://help.giffgaff.com/en/articles/242797-understanding-why-your-number-has-been-deactivated"
+          target="_blank"
+          rel="noreferrer"
+          >官方停用规则</a
+        >
+        <a href="https://www.giffgaff.com/roaming-charges" target="_blank" rel="noreferrer"
+          >官方漫游资费</a
+        >
+        <br />无统计、无广告、无第三方网络请求；点击官方链接时除外。
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const EXPECTED_BYTES = 120 * 1024;
+        const STORAGE_KEY = "giffgaffKeeperHistoryV2";
+        const MAX_HISTORY = 5;
+        const REQUEST_TIMEOUT_MS = 45_000;
+
+        const confirmCheckbox = document.getElementById("networkConfirm");
+        const downloadButton = document.getElementById("downloadButton");
+        const status = document.getElementById("status");
+        const statusHeading = document.getElementById("statusHeading");
+        const statusDetail = document.getElementById("statusDetail");
+        const historyList = document.getElementById("historyList");
+        const nextDate = document.getElementById("nextDate");
+        let busy = false;
+
+        function readHistory() {
+          try {
+            const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+            if (!Array.isArray(parsed)) return [];
+
+            return parsed.filter(
+              (item) =>
+                item &&
+                Number.isFinite(item.timestamp) &&
+                Number.isFinite(item.bytes) &&
+                item.bytes === EXPECTED_BYTES,
+            );
+          } catch {
+            return [];
+          }
+        }
+
+        function writeHistory(items) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(-MAX_HISTORY)));
+          } catch {
+            // Storage can be unavailable in private browsing; the download still succeeds.
+          }
+        }
+
+        function formatDate(timestamp) {
+          return new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(new Date(timestamp));
+        }
+
+        function renderHistory() {
+          const history = readHistory();
+          historyList.replaceChildren();
+
+          if (history.length === 0) {
+            const empty = document.createElement("li");
+            empty.className = "empty";
+            empty.textContent = "暂无记录。完成一次校验通过的下载后会显示在这里。";
+            historyList.append(empty);
+            nextDate.hidden = true;
+            return;
+          }
+
+          [...history].reverse().forEach((item) => {
+            const row = document.createElement("li");
+            row.className = "history-item";
+
+            const date = document.createElement("strong");
+            date.textContent = formatDate(item.timestamp);
+
+            const size = document.createElement("span");
+            size.textContent = `${(item.bytes / 1024).toFixed(0)} KiB`;
+
+            row.append(date, size);
+            historyList.append(row);
+          });
+
+          const latest = new Date(history.at(-1).timestamp);
+          const suggested = new Date(latest);
+          suggested.setMonth(suggested.getMonth() + 5);
+          nextDate.textContent = `按 5 个月余量计算，建议下次不晚于 ${new Intl.DateTimeFormat(
+            "zh-CN",
+            { year: "numeric", month: "long", day: "numeric" },
+          ).format(suggested)}。`;
+          nextDate.hidden = false;
+        }
+
+        function setStatus(state, heading, detail, spinning = false) {
+          status.hidden = false;
+          status.dataset.state = state;
+          statusHeading.replaceChildren();
+
+          if (spinning) {
+            const spinner = document.createElement("span");
+            spinner.className = "spinner";
+            spinner.setAttribute("aria-hidden", "true");
+            statusHeading.append(spinner);
+          }
+
+          statusHeading.append(document.createTextNode(heading));
+          statusDetail.textContent = detail;
+        }
+
+        function syncButton() {
+          downloadButton.disabled = busy || !confirmCheckbox.checked;
+        }
+
+        function cacheBuster() {
+          if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+          return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+
+        async function downloadPayload() {
+          if (busy || !confirmCheckbox.checked) return;
+
+          if (!navigator.onLine) {
+            setStatus("error", "浏览器处于离线状态", "请检查移动数据后再试；页面不会自动重试。", false);
+            return;
+          }
+
+          busy = true;
+          syncButton();
+          setStatus("loading", "正在下载固定载荷", "请保持页面打开；本页不会自动重试。", true);
+
+          const controller = new AbortController();
+          const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+          const startedAt = performance.now();
+
+          try {
+            const url = new URL("./payload.bin", window.location.href);
+            url.searchParams.set("run", cacheBuster());
+
+            const response = await fetch(url, {
+              cache: "no-store",
+              credentials: "same-origin",
+              signal: controller.signal,
+            });
+
+            if (!response.ok) {
+              throw new Error(`服务器返回 HTTP ${response.status}`);
+            }
+
+            const payload = await response.arrayBuffer();
+            if (payload.byteLength !== EXPECTED_BYTES) {
+              throw new Error(
+                `大小校验失败：收到 ${(payload.byteLength / 1024).toFixed(2)} KiB，预期 120 KiB`,
+              );
+            }
+
+            const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(2);
+            const history = readHistory();
+            history.push({ timestamp: Date.now(), bytes: payload.byteLength });
+            writeHistory(history);
+            renderHistory();
+
+            setStatus(
+              "success",
+              "数据请求完成",
+              `已接收 120.00 KiB，用时 ${elapsedSeconds} 秒。请到 Giffgaff 账户或余额记录中确认运营商侧活动。`,
+              false,
+            );
+          } catch (error) {
+            const message =
+              error instanceof DOMException && error.name === "AbortError"
+                ? "请求在 45 秒后超时，页面没有自动重试。"
+                : `${error instanceof Error ? error.message : "未知错误"}。请确认网络；手动重试可能再次产生流量。`;
+            setStatus("error", "未能完成校验", message, false);
+          } finally {
+            window.clearTimeout(timeoutId);
+            busy = false;
+            confirmCheckbox.checked = false;
+            syncButton();
+          }
+        }
+
+        confirmCheckbox.addEventListener("change", syncButton);
+        downloadButton.addEventListener("click", downloadPayload);
+        renderHistory();
+        syncButton();
+      })();
+    </script>
+  </body>
+</html>
