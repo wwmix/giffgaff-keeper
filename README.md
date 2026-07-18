@@ -2,7 +2,15 @@
 
 一个完全静态、无第三方依赖的 Giffgaff SIM 保号辅助页面。它通过同源下载一个固定的 120 KiB 二进制载荷，帮助用户主动产生一次移动数据连接。
 
+**在线使用：[打开 Giffgaff 保号助手](https://wwmix.github.io/giffgaff-keeper/)**
+
 > 这不是 Giffgaff 官方工具。网页只能确认文件下载与大小校验完成，不能确认运营商已经登记活动；使用后仍应检查 Giffgaff 账户或余额记录。
+
+## 致谢与来源
+
+本项目的核心思路与初始方案借鉴自 [dennischancs/gg-keeper](https://github.com/dennischancs/gg-keeper)。感谢原作者 [@dennischancs](https://github.com/dennischancs) 公开分享 Giffgaff 流量保号方案，为本项目提供了清晰的实现思路。
+
+本仓库在原方案基础上重新实现页面，并针对载荷可压缩性、结果表述、误触保护、本地记录安全、漫游费用提示与无障碍体验进行了调整。原项目的贡献与启发应当被明确保留和尊重。
 
 ## 相比参考方案的改进
 
